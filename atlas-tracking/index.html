@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Atlas Tracking — Global Parcel & Freight Tracking</title>
+<meta name="description" content="Track shipments in real time and get a quote for parcel, freight, and consignment delivery with Atlas Tracking." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="brand-mark"></span>
+      <span class="brand-name">Atlas <span>Tracking</span></span>
+    </a>
+    <div class="navlinks">
+      <a href="track.html">Track</a>
+      <a href="services.html">Services</a>
+      <a href="quote.html">Get a quote</a>
+      <a href="contact.html">Contact</a>
+      <a href="quote.html" class="btn btn-brass">Ship with us</a>
+    </div>
+    <button class="nav-toggle" data-nav-toggle aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Global consignment &amp; freight</div>
+      <h1>Every consignment,<br>charted end to end.</h1>
+      <p class="lede">Atlas Tracking moves parcels and freight across borders with a clear paper trail — enter a tracking number and see exactly where it is, right now.</p>
+      <form class="track-widget" data-track-form="home-track-result">
+        <input class="mono" type="text" placeholder="Enter tracking number" required />
+        <button class="btn btn-brass" type="submit">Track</button>
+      </form>
+      <div id="home-track-result" class="hidden mt-32"></div>
+    </div>
+
+    <div class="route-panel">
+      <div class="route-label">
+        <span>ROUTE</span>
+        <span>TRACKING</span>
+      </div>
+      <svg class="route-svg" viewBox="0 0 400 110" preserveAspectRatio="none">
+        <path class="route-path" d="M 8 90 C 90 90, 120 20, 210 20 S 340 90, 400 90" />
+        <circle class="route-dot" cx="8" cy="90" r="4"></circle>
+        <circle class="route-marker" cx="400" cy="90" r="4"></circle>
+        <circle class="route-runner" r="5"></circle>
+      </svg>
+      <div class="route-endpoints">
+        <div><strong>Atlanta, US</strong>Origin facility</div>
+        <div style="text-align:right"><strong>Mackay, AU</strong>Final destination</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="stat-strip">
+  <div class="wrap">
+    <div><div class="stat-num mono">120+</div><div class="stat-label">Countries served</div></div>
+    <div><div class="stat-num mono">98.4%</div><div class="stat-label">On-time delivery</div></div>
+    <div><div class="stat-num mono">6,000+</div><div class="stat-label">Consignments / month</div></div>
+    <div><div class="stat-num mono">24/7</div><div class="stat-label">Tracking updates</div></div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">What we move</div>
+      <h2>Services built for consignment work</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <span class="idx mono">01</span>
+        <h3>Parcel delivery</h3>
+        <p>Door-to-door delivery for individual packages, with full tracking from pickup to signature.</p>
+      </div>
+      <div class="card">
+        <span class="idx mono">02</span>
+        <h3>Freight &amp; pallets</h3>
+        <p>Palletised and bulk freight across road, air, and sea legs, consolidated for cost and speed.</p>
+      </div>
+      <div class="card">
+        <span class="idx mono">03</span>
+        <h3>Customs handling</h3>
+        <p>Documentation and clearance support so consignments move through customs without delay.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Process</div>
+      <h2>From pickup to proof of delivery</h2>
+    </div>
+    <div class="grid-2">
+      <div class="timeline">
+        <div class="timeline-item current">
+          <div class="timeline-time mono">STEP 1</div>
+          <div class="timeline-status">Request a quote</div>
+          <div class="timeline-loc">Tell us the origin, destination, and package details.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time mono">STEP 2</div>
+          <div class="timeline-status">We generate a tracking number</div>
+          <div class="timeline-loc">Your consignment is logged and a manifest is created.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time mono">STEP 3</div>
+          <div class="timeline-status">In transit</div>
+          <div class="timeline-loc">Live status updates at every hub and border crossing.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time mono">STEP 4</div>
+          <div class="timeline-status">Delivered</div>
+          <div class="timeline-loc">Confirmed on arrival, visible on your tracking page.</div>
+        </div>
+      </div>
+      <div class="card" style="align-self:start;">
+        <span class="idx mono">READY?</span>
+        <h3>Get a shipping quote</h3>
+        <p>Tell us what you're sending and where — we'll come back with a rate and an estimated transit time.</p>
+        <a href="quote.html" class="btn btn-brass mt-32">Request a quote</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="brand" style="margin-bottom:12px;">
+          <span class="brand-mark"></span>
+          <span class="brand-name">Atlas <span>Tracking</span></span>
+        </div>
+        <p style="max-width:32ch;color:var(--fog-dim);font-size:0.88rem;">Global parcel and freight tracking for consignment businesses and individual senders.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Site</h4>
+          <a href="track.html">Track a shipment</a>
+          <a href="services.html">Services</a>
+          <a href="quote.html">Get a quote</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <p>support@atlastracking.com</p>
+           </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Atlas Tracking. All rights reserved.</span>
+      <a href="admin/login.html">Admin login</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
