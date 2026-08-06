@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0d1a29">
+  <title>Atlas Tracking — Admin Dashboard</title>
+  <link rel="stylesheet" href="../css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="brand">ATLAS <span>TRACKING</span></div>
+      <nav>
+        <a href="#" class="active" data-tab="shipments">Shipments</a>
+        <a href="#" data-tab="quotes">Quote Requests</a>
+        <a href="#" data-tab="messages">Messages</a>
+      </nav>
+      <button id="logout-link" class="logout">Sign out</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Operations</p>
+          <h1>Admin dashboard</h1>
+        </div>
+        <button id="new-shipment-btn" class="primary">+ New shipment</button>
+      </header>
+
+      <section id="tab-shipments" class="tab-panel">
+        <div class="panel">
+          <div class="panel-head">
+            <div><h2>Shipments</h2><p>Create, update and track deliveries.</p></div>
+            <button class="secondary" id="refresh-shipments">Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Tracking</th><th>Status</th><th>Route</th><th>Receiver</th><th>Updated</th><th></th></tr></thead>
+              <tbody id="shipments-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-quotes" class="tab-panel hidden">
+        <div class="panel">
+          <div class="panel-head"><div><h2>Quote requests</h2><p>Review and update incoming quote requests.</p></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Route</th><th>Status</th><th></th></tr></thead><tbody id="quotes-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <section id="tab-messages" class="tab-panel hidden">
+        <div class="panel">
+          <div class="panel-head"><div><h2>Contact messages</h2><p>Review customer enquiries.</p></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Subject</th><th>Status</th><th></th></tr></thead><tbody id="messages-tbody"></tbody></table></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="shipment-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="shipment-modal-title">
+    <div class="modal-card large">
+      <div class="modal-head">
+        <div><p class="eyebrow">Shipment record</p><h2 id="shipment-modal-title">New shipment</h2></div>
+        <button class="icon-btn" type="button" data-close-modal aria-label="Close">×</button>
+      </div>
+
+      <form id="shipment-form">
+        <input type="hidden" name="id">
+        <div class="grid two">
+          <label>Tracking number<input name="tracking_number" required placeholder="ATX-10001"></label>
+          <label>Status
+            <select name="status">
+              <option value="pending">Pending</option><option value="picked_up">Picked up</option>
+              <option value="in_transit">In transit</option><option value="customs">In customs</option>
+              <option value="out_for_delivery">Out for delivery</option><option value="delivered">Delivered</option>
+              <option value="exception">Exception</option>
+            </select>
+          </label>
+          <label>Service type<input name="service_type" placeholder="Standard / Express"></label>
+          <label>Estimated delivery<input type="date" name="est_delivery"></label>
+          <label>Origin<input name="origin" required></label>
+          <label>Destination<input name="destination" required></label>
+          <label>Sender name<input name="sender_name"></label>
+          <label>Receiver name<input name="receiver_name"></label>
+          <label>Sender email<input type="email" name="sender_email"></label>
+          <label>Receiver email<input type="email" name="receiver_email"></label>
+          <label>Weight (kg)<input type="number" min="0" step="0.01" name="weight_kg"></label>
+          <label>Dimensions<input name="dimensions" placeholder="L × W × H cm"></label>
+          <label class="full">Contents<input name="contents"></label>
+        </div>
+
+        <div class="subpanel">
+          <div class="section-head"><div><h3>Shipping charges</h3><p>Calculate and save the amount attached to this shipment.</p></div></div>
+          <div class="grid three">
+            <label>Currency<select name="currency"><option>USD</option><option>NGN</option><option>GBP</option><option>EUR</option></select></label>
+            <label>Base charge<input type="number" min="0" step="0.01" name="base_charge" value="0"></label>
+            <label>Per-kg rate<input type="number" min="0" step="0.01" name="per_kg_rate" value="0"></label>
+            <label>Service surcharge<input type="number" min="0" step="0.01" name="service_charge" value="0"></label>
+            <label>Insurance<input type="number" min="0" step="0.01" name="insurance_charge" value="0"></label>
+            <label>Additional fees<input type="number" min="0" step="0.01" name="additional_charge" value="0"></label>
+          </div>
+          <div class="charge-summary">
+            <span>Weight charge: <strong id="weight-charge-preview">0.00</strong></span>
+            <span>Total: <strong id="total-charge-preview">0.00</strong></span>
+          </div>
+        </div>
+
+        <div id="events-section" class="subpanel hidden">
+          <div class="section-head"><div><h3>Tracking events</h3><p>Add the latest movement or delivery milestone.</p></div></div>
+          <div id="events-list" class="timeline"></div>
+          <form id="event-form" class="event-form">
+            <select name="status"><option value="pending">Pending</option><option value="picked_up">Picked up</option><option value="in_transit">In transit</option><option value="customs">In customs</option><option value="out_for_delivery">Out for delivery</option><option value="delivered">Delivered</option><option value="exception">Exception</option></select>
+            <input name="location" placeholder="Location" required>
+            <input name="note" placeholder="Update note">
+            <button class="secondary" type="submit">Add event</button>
+          </form>
+        </div>
+
+        <div id="delivery-section" class="subpanel hidden">
+          <div class="section-head"><div><h3>Proof of delivery</h3><p>Record who received the shipment and attach delivery evidence.</p></div></div>
+          <div class="grid two">
+            <label>Recipient name<input id="pod-recipient" name="pod_recipient"></label>
+            <label>Delivery date/time<input id="pod-delivered-at" name="pod_delivered_at" type="datetime-local"></label>
+            <label>Delivery location<input id="pod-location" name="pod_location"></label>
+            <label class="full">Delivery notes<textarea id="pod-notes" name="pod_notes" rows="3"></textarea></label>
+          </div>
+
+          <div class="proof-grid">
+            <div>
+              <h4>Recipient signature</h4>
+              <canvas id="signature-pad" width="700" height="260"></canvas>
+              <div class="row"><button type="button" class="secondary" id="clear-signature">Clear signature</button><span id="signature-status" class="muted"></span></div>
+            </div>
+            <div>
+              <h4>Delivery photos</h4>
+              <input id="delivery-photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+              <div id="photo-list" class="photo-list"></div>
+            </div>
+          </div>
+          <button type="button" class="primary" id="save-pod-btn">Save proof of delivery</button>
+          <div id="pod-message" class="notice hidden"></div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="secondary" data-close-modal>Cancel</button>
+          <button type="submit" class="primary">Save shipment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/admin.js"></script>
+</body>
+</html>
