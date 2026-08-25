@@ -1,0 +1,3 @@
+-- The live Supabase database was already initialized before this project package was created.
+-- Keep your original schema SQL here if you want a version-controlled migration history.
+-- Expected core tables used by this app: profiles, orders, shipments, tracking_events.
