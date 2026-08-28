@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion } from 'motion/react';
 import { createClient } from '@/lib/supabase/client';
+import Logo from '@/components/Logo';
 
 export default function Navbar(){
   const path = usePathname();
@@ -42,10 +42,7 @@ export default function Navbar(){
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#06101d]/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
-        <Link href="/" className="group flex items-center gap-2 text-xl font-black tracking-tight">
-          <motion.span whileHover={{ rotate:-8, scale:1.08 }} className="grid h-9 w-9 place-items-center rounded-xl bg-cyanx text-[#03101b]">A</motion.span>
-          <span>Atlas <span className="text-cyanx">Tracking</span></span>
-        </Link>
+        <Logo href="/" />
         <nav className="flex items-center gap-2 text-sm">
           <Link href="/track" className={`nav-pill ${path==='/track'?'nav-active':''}`}>Track</Link>
           {signedIn && <Link href="/dashboard" className={`nav-pill ${path==='/dashboard'?'nav-active':''}`}>Dashboard</Link>}
