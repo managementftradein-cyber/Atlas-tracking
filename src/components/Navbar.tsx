@@ -45,6 +45,7 @@ export default function Navbar(){
         <Logo href="/" />
         <nav className="flex items-center gap-2 text-sm">
           <Link href="/track" className={`nav-pill ${path==='/track'?'nav-active':''}`}>Track</Link>
+          <Link href="/support" className={`nav-pill ${path==='/support'?'nav-active':''}`}>Support</Link>
           {signedIn && <Link href="/dashboard" className={`nav-pill ${path==='/dashboard'?'nav-active':''}`}>Dashboard</Link>}
           {!signedIn ? (
             <>
