@@ -24,6 +24,7 @@ export default function AdminHeader() {
         <nav className="flex items-center gap-2 text-sm">
           <Link href="/admin" className="nav-pill">Shipments</Link>
           <Link href="/admin/support" className="nav-pill">Support</Link>
+          <Link href="/admin/cms" className="nav-pill">CMS</Link>
           <button onClick={logout} className="nav-pill">Sign out</button>
         </nav>
       </div>

@@ -1,14 +1,17 @@
- 'use client';
+'use client';
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { useLanguage } from '@/lib/LanguageContext';
 import Logo from '@/components/Logo';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Navbar(){
   const path = usePathname();
   const router = useRouter();
+  const { t } = useLanguage();
   const [signedIn, setSignedIn] = useState(false);
 
   useEffect(() => {
@@ -44,17 +47,18 @@ export default function Navbar(){
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
         <Logo href="/" />
         <nav className="flex items-center gap-2 text-sm">
-          <Link href="/track" className={`nav-pill ${path==='/track'?'nav-active':''}`}>Track</Link>
-          <Link href="/support" className={`nav-pill ${path==='/support'?'nav-active':''}`}>Support</Link>
-          {signedIn && <Link href="/dashboard" className={`nav-pill ${path==='/dashboard'?'nav-active':''}`}>Dashboard</Link>}
+          <Link href="/track" className={`nav-pill ${path==='/track'?'nav-active':''}`}>{t('track')}</Link>
+          <Link href="/support" className={`nav-pill ${path==='/support'?'nav-active':''}`}>{t('support')}</Link>
+          {signedIn && <Link href="/dashboard" className={`nav-pill ${path==='/dashboard'?'nav-active':''}`}>{t('dashboard')}</Link>}
           {!signedIn ? (
             <>
-              <Link href="/login" className="nav-pill">Login</Link>
-              <Link href="/register" className="ml-1 rounded-xl bg-cyanx px-4 py-2 font-bold text-[#03101b] shadow-lg shadow-cyan-500/10 hover:-translate-y-0.5">Sign Up</Link>
+              <Link href="/login" className="nav-pill">{t('login')}</Link>
+              <Link href="/register" className="ml-1 rounded-xl bg-cyanx px-4 py-2 font-bold text-[#03101b] shadow-lg shadow-cyan-500/10 hover:-translate-y-0.5">{t('signup')}</Link>
             </>
           ) : (
-            <button onClick={logout} className="nav-pill">Logout</button>
+            <button onClick={logout} className="nav-pill">{t('logout')}</button>
           )}
+          <LanguageSwitcher compact />
         </nav>
       </div>
     </header>

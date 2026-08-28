@@ -1,14 +1,18 @@
 'use client';
-import Link from 'next/link'; import {useState} from 'react'; import {useRouter} from 'next/navigation'; import {motion} from 'motion/react'; import AnimatedCard from '@/components/AnimatedCard';
+import Link from 'next/link'; import {useEffect,useState} from 'react'; import {useRouter} from 'next/navigation'; import {motion} from 'motion/react'; import AnimatedCard from '@/components/AnimatedCard'; import {createClient} from '@/lib/supabase/client';
+
+const DEFAULTS = { hero_eyebrow:'GLOBAL PARCEL TRACKING', hero_title_line1:'Ship globally.', hero_title_line2:'Track instantly.', hero_subtitle:'A modern logistics platform for shipment creation, tracking and delivery visibility — built around one simple tracking experience.' };
 
 export default function Home(){
  const [n,setN]=useState(''); const r=useRouter();
+ const [c,setC]=useState<Record<string,string>>(DEFAULTS);
+ useEffect(()=>{(async()=>{const db=createClient();const {data}=await db.from('site_content').select('key,value').in('key',Object.keys(DEFAULTS));const map:Record<string,string>={...DEFAULTS};(data||[]).forEach((row:any)=>{if(row.value)map[row.key]=row.value});setC(map)})()},[]);
  const features=[['Instant Order Setup','Book a shipment in minutes and get a unique tracking number right away.'],['Real-Time Status Updates','Every milestone, from pickup to delivery, is reflected the moment it happens.'],['Full Delivery Visibility','Follow a clean, step-by-step timeline from pickup through delivery.']];
  return <main>
   <section className="hero-shell grid-bg px-5 py-20 sm:py-28"><div className="mx-auto max-w-7xl grid gap-14 lg:grid-cols-[1.05fr_.95fr] items-center">
    <motion.div initial={{opacity:0,x:-30}} animate={{opacity:1,x:0}} transition={{duration:.65}}>
-    <p className="eyebrow">GLOBAL PARCEL TRACKING</p><h1 className="mt-4 text-5xl sm:text-7xl font-black leading-[.95] tracking-[-.04em]">Ship globally.<br/><span className="text-cyanx">Track instantly.</span></h1>
-    <p className="mt-7 max-w-xl text-lg leading-8 text-slate-400">A modern logistics platform for shipment creation, tracking and delivery visibility — built around one simple tracking experience.</p>
+    <p className="eyebrow">{c.hero_eyebrow}</p><h1 className="mt-4 text-5xl sm:text-7xl font-black leading-[.95] tracking-[-.04em]">{c.hero_title_line1}<br/><span className="text-cyanx">{c.hero_title_line2}</span></h1>
+    <p className="mt-7 max-w-xl text-lg leading-8 text-slate-400">{c.hero_subtitle}</p>
     <form onSubmit={e=>{e.preventDefault();if(n.trim())r.push('/track?number='+encodeURIComponent(n.trim()))}} className="track-search mt-8 flex flex-col gap-3 sm:flex-row"><input value={n} onChange={e=>setN(e.target.value)} placeholder="Enter tracking number" className="flex-1 bg-transparent p-4 outline-none"/><button className="rounded-2xl bg-cyanx px-7 py-4 font-bold text-[#03101b] hover:-translate-y-0.5">Track Parcel</button></form>
     <div className="mt-6 flex flex-wrap gap-3 text-xs text-slate-500"><span className="status-dot">Live tracking</span><span>Secure customer access</span><span>Real-time delivery updates</span></div>
    </motion.div>
