@@ -9,7 +9,6 @@ import { createClient } from '@/lib/supabase/client';
 export default function Navbar(){
   const path = usePathname();
   const router = useRouter();
-  const [admin, setAdmin] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
 
   useEffect(() => {
@@ -18,10 +17,6 @@ export default function Navbar(){
     const load = async () => {
       const { data: { user } } = await db.auth.getUser();
       setSignedIn(!!user);
-      if (!user) { setAdmin(false); return; }
-
-      const { data } = await db.rpc('is_admin');
-      setAdmin(data === true);
     };
 
     load();
@@ -36,10 +31,13 @@ export default function Navbar(){
   const logout = async () => {
     await createClient().auth.signOut();
     setSignedIn(false);
-    setAdmin(false);
     router.push('/');
     router.refresh();
   };
+
+  // Admin section renders its own separate header (see src/app/admin/layout.tsx)
+  // so admin chrome never shares a page with customer login/signup/dashboard links.
+  if (path?.startsWith('/admin')) return null;
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#06101d]/90 backdrop-blur-xl">
@@ -51,7 +49,6 @@ export default function Navbar(){
         <nav className="flex items-center gap-2 text-sm">
           <Link href="/track" className={`nav-pill ${path==='/track'?'nav-active':''}`}>Track</Link>
           {signedIn && <Link href="/dashboard" className={`nav-pill ${path==='/dashboard'?'nav-active':''}`}>Dashboard</Link>}
-          {admin && <Link href="/admin" className={`nav-pill ${path==='/admin'?'nav-active':''}`}>Admin</Link>}
           {!signedIn ? (
             <>
               <Link href="/login" className="nav-pill">Login</Link>
