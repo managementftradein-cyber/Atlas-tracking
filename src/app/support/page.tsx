@@ -9,6 +9,7 @@ export default function Support() {
   const r = useRouter();
   const [tickets, setTickets] = useState<any[]>([]);
   const [f, setF] = useState({ subject: '', message: '', tracking_number: '' });
+  const [website, setWebsite] = useState(''); // honeypot — real users never see or fill this
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
 
@@ -24,6 +25,7 @@ export default function Support() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (website) return; // honeypot tripped — silently drop, don't tip off the bot
     setBusy(true);
     setMsg('');
     const db = createClient();
@@ -32,9 +34,9 @@ export default function Support() {
 
     const { error } = await db.from('support_tickets').insert({
       customer_id: user.id,
-      subject: f.subject,
-      message: f.message,
-      tracking_number: f.tracking_number || null,
+      subject: f.subject.trim().slice(0, 200),
+      message: f.message.trim().slice(0, 4000),
+      tracking_number: f.tracking_number.trim().slice(0, 40) || null,
     });
 
     setBusy(false);
@@ -51,14 +53,15 @@ export default function Support() {
       <p className="mt-2 text-slate-500">Send us a message and a member of our team will respond by email.</p>
 
       <form onSubmit={submit} className="glass mt-8 rounded-3xl p-7 space-y-5">
+        <input type="text" name="website" value={website} onChange={e => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
         <label className="block text-sm text-slate-400">Subject
-          <input required value={f.subject} onChange={e => setF(x => ({ ...x, subject: e.target.value }))} className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 p-3" />
+          <input required maxLength={200} value={f.subject} onChange={e => setF(x => ({ ...x, subject: e.target.value }))} className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 p-3" />
         </label>
         <label className="block text-sm text-slate-400">Tracking number <span className="text-slate-600">(optional)</span>
-          <input value={f.tracking_number} onChange={e => setF(x => ({ ...x, tracking_number: e.target.value }))} placeholder="ATL-2026-XXXXXXXX" className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 p-3" />
+          <input maxLength={40} value={f.tracking_number} onChange={e => setF(x => ({ ...x, tracking_number: e.target.value }))} placeholder="ATL-2026-XXXXXXXX" className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 p-3" />
         </label>
         <label className="block text-sm text-slate-400">Message
-          <textarea required rows={5} value={f.message} onChange={e => setF(x => ({ ...x, message: e.target.value }))} className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 p-3" />
+          <textarea required maxLength={4000} rows={5} value={f.message} onChange={e => setF(x => ({ ...x, message: e.target.value }))} className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 p-3" />
         </label>
         <button disabled={busy} className="w-full rounded-xl bg-cyanx p-4 font-bold text-[#03101b] disabled:opacity-50">{busy ? 'Sending…' : 'Send message'}</button>
         {msg && <p className="text-center text-sm text-slate-400">{msg}</p>}

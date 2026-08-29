@@ -49,7 +49,7 @@ export default function ChatWidget() {
         setEscalate(false);
         return;
       }
-      const { error } = await db.from('support_tickets').insert({ customer_id: user.id, subject: 'Chat message', message: text });
+      const { error } = await db.from('support_tickets').insert({ customer_id: user.id, subject: 'Chat message', message: text.slice(0, 4000) });
       setMessages(m => [...m, { from: 'bot', text: error ? `Something went wrong sending that: ${error.message}` : 'Got it \u2014 I\u2019ve sent that to our support team, they\u2019ll follow up by email.' }]);
       setEscalate(false);
       return;
@@ -65,9 +65,9 @@ export default function ChatWidget() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50">
+    <div className="fixed bottom-4 right-4 z-50 sm:bottom-5 sm:right-5">
       {open && (
-        <div className="glass mb-3 flex h-[420px] w-[320px] flex-col rounded-2xl border border-white/10 shadow-2xl">
+        <div className="glass mb-3 flex h-[min(70vh,420px)] w-[min(90vw,320px)] flex-col rounded-2xl border border-white/10 shadow-2xl">
           <div className="flex items-center justify-between border-b border-white/10 p-4">
             <p className="font-bold">Atlas Assistant</p>
             <button onClick={() => setOpen(false)} aria-label="Close chat"><X size={18} /></button>
@@ -79,7 +79,7 @@ export default function ChatWidget() {
             <div ref={endRef} />
           </div>
           <div className="flex gap-2 border-t border-white/10 p-3">
-            <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Ask a question\u2026" className="flex-1 rounded-xl border border-white/10 bg-white/5 p-2 text-sm outline-none" />
+            <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} maxLength={1000} placeholder="Ask a question\u2026" className="flex-1 rounded-xl border border-white/10 bg-white/5 p-2 text-sm outline-none" />
             <button onClick={send} aria-label="Send message" className="grid h-9 w-9 place-items-center rounded-xl bg-cyanx text-[#03101b]"><Send size={16} /></button>
           </div>
         </div>

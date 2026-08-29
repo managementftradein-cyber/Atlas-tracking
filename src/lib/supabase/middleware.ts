@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const PROTECTED_PREFIXES = ['/dashboard', '/admin']
+
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request })
 
@@ -21,6 +23,19 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getClaims()
+  const { data } = await supabase.auth.getClaims()
+  const isProtected = PROTECTED_PREFIXES.some(p => request.nextUrl.pathname.startsWith(p))
+
+  // Server-side gate: previously /dashboard/* pages only checked auth
+  // client-side (after the page had already started rendering). This
+  // redirects unauthenticated requests before any page code runs.
+  // Admin pages layer their own is_admin() check on top of this.
+  if (isProtected && !data?.claims?.sub) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    url.searchParams.set('next', request.nextUrl.pathname)
+    return NextResponse.redirect(url)
+  }
+
   return response
 }

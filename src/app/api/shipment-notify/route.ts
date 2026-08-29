@@ -14,6 +14,18 @@ const STATUS_LABEL: Record<string, string> = {
   cancelled: 'Cancelled',
 };
 
+// These fields are ultimately admin/customer-provided data being
+// interpolated into a raw HTML email — escape before use so stored
+// content can't inject markup or scripts into the message.
+function escapeHtml(s: unknown) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // Called by a Postgres trigger (see supabase/notify_trigger.sql) whenever a
 // row is inserted into tracking_events — not by the frontend directly. This
 // means a customer gets emailed regardless of where the status update came
@@ -64,14 +76,14 @@ export async function POST(req: Request) {
       <div style="font-family:Arial,Helvetica,sans-serif;background:#06101d;padding:32px;color:#eaf4fb;">
         <div style="max-width:520px;margin:0 auto;background:#0b1828;border-radius:16px;padding:32px;border:1px solid rgba(255,255,255,.08);">
           <p style="margin:0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#26b7e8;font-weight:700;">Atlas Tracking</p>
-          <h1 style="margin:12px 0 0;font-size:22px;">${statusLabel}</h1>
-          <p style="margin:8px 0 0;color:#94a3b8;">Tracking number <b style="color:#eaf4fb;">${shipment.tracking_number}</b></p>
+          <h1 style="margin:12px 0 0;font-size:22px;">${escapeHtml(statusLabel)}</h1>
+          <p style="margin:8px 0 0;color:#94a3b8;">Tracking number <b style="color:#eaf4fb;">${escapeHtml(shipment.tracking_number)}</b></p>
           <div style="margin:24px 0;padding:16px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);">
             <p style="margin:0;font-size:13px;color:#64748b;">Location</p>
-            <p style="margin:4px 0 0;font-weight:700;">${event.location || '—'}</p>
-            ${event.description ? `<p style="margin:12px 0 0;color:#94a3b8;font-size:14px;">${event.description}</p>` : ''}
+            <p style="margin:4px 0 0;font-weight:700;">${escapeHtml(event.location) || '—'}</p>
+            ${event.description ? `<p style="margin:12px 0 0;color:#94a3b8;font-size:14px;">${escapeHtml(event.description)}</p>` : ''}
           </div>
-          <p style="margin:0;color:#94a3b8;font-size:13px;">${shipment.origin} → ${shipment.destination}</p>
+          <p style="margin:0;color:#94a3b8;font-size:13px;">${escapeHtml(shipment.origin)} → ${escapeHtml(shipment.destination)}</p>
           <a href="${trackUrl}" style="display:inline-block;margin-top:20px;background:#26b7e8;color:#03101b;font-weight:700;padding:12px 20px;border-radius:10px;text-decoration:none;">Track this shipment</a>
         </div>
       </div>
