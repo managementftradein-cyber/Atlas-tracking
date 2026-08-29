@@ -39,6 +39,8 @@ export default async function AdminCms() {
         <Link href="/admin/cms/locations" className="rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-slate-300 hover:bg-white/5">Manage Locations</Link>
         <Link href="/admin/cms/blog" className="rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-slate-300 hover:bg-white/5">Manage Blog</Link>
         <Link href="/admin/cms/rates" className="rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-slate-300 hover:bg-white/5">Manage Shipping Rates</Link>
+        <Link href="/admin/cms/languages" className="rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-slate-300 hover:bg-white/5">Manage Languages</Link>
+        <Link href="/admin/cms/translations" className="rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-slate-300 hover:bg-white/5">Manage Translations</Link>
       </div>
 
       {error ? (
